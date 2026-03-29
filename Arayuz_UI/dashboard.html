@@ -37,12 +37,12 @@
         <!-- Enhanced Top Navigation -->
         <nav class="top-nav reveal">
             <div class="nav-left">
-                <span class="nav-logo">⚡ COSMIC BALANCE</span>
+                <span class="nav-logo">⚡ SOLARIS</span>
                 <span class="nav-mission">SWOC v3.0</span>
                 <div class="nav-breadcrumb">
-                    <span>OPERATIONS</span>
+                    <span>OPERASYONLAR</span>
                     <span class="breadcrumb-sep">›</span>
-                    <span>REAL-TIME MONITORING</span>
+                    <span>GERÇEK ZAMANLI İZLEME</span>
                 </div>
             </div>
             <div class="nav-center">
@@ -52,20 +52,20 @@
                     <span id="utc-date" class="time-date">----/--/--</span>
                 </div>
                 <div class="time-display">
-                    <span class="time-label">LOCAL</span>
+                    <span class="time-label">YEREL</span>
                     <span id="local-time" class="time-value">--:--:--</span>
                     <span id="local-date" class="time-date">----/--/--</span>
                 </div>
                 <div class="time-display">
-                    <span class="time-label">MISSION</span>
+                    <span class="time-label">GÖREV</span>
                     <span id="mission-time" class="time-value">--:--:--</span>
-                    <span class="time-date">ELAPSED</span>
+                    <span class="time-date">GEÇEN</span>
                 </div>
             </div>
             <div class="nav-right">
                 <div class="connection-status">
                     <span class="conn-dot"></span>
-                    <span>LIVE</span>
+                    <span>CANLI</span>
                     <span class="conn-latency" id="latency">~50ms</span>
                 </div>
                 <button class="nav-btn" onclick="toggleFullscreen()">
@@ -84,7 +84,7 @@
                     </video>
                     <div class="earth-video-info">
                         <div class="earth-info-item">
-                            <span class="earth-info-label">COSMIC BALANCE</span>
+                            <span class="earth-info-label">SOLARIS</span>
                             <span class="earth-info-value">Güneş Aktivitesini Gerçek Zamanlı Takip Et</span>
                         </div>
                     </div>
@@ -94,9 +94,9 @@
             <!-- Critical Status Overview -->
             <div class="critical-overview reveal">
                 <div class="overview-header">
-                    <h2>🎯 MISSION CRITICAL STATUS</h2>
+                    <h2>🎯 KRİTİK GÖREV DURUMU</h2>
                     <div class="overview-timestamp">
-                        <span>LAST UPDATE:</span>
+                        <span>SON GÜNCELLEME:</span>
                         <span id="last-update-time">--:--:--</span>
                     </div>
                 </div>
@@ -104,66 +104,107 @@
                     <div class="overview-card threat">
                         <div class="overview-icon">⚠️</div>
                         <div class="overview-data">
-                            <span class="overview-label">THREAT LEVEL</span>
+                            <span class="overview-label">TEHDİT SEVİYESİ</span>
                             <span class="overview-value" id="overview-threat">G0</span>
                         </div>
                         <div class="overview-trend" id="threat-trend">
                             <span class="trend-arrow">→</span>
-                            <span class="trend-text">STABLE</span>
+                            <span class="trend-text">KARARLΙ</span>
                         </div>
                     </div>
                     <div class="overview-card wind">
                         <div class="overview-icon">🌪️</div>
                         <div class="overview-data">
-                            <span class="overview-label">SOLAR WIND</span>
+                            <span class="overview-label">GÜNEŞ RÜZGARI</span>
                             <span class="overview-value" id="overview-wind">--- km/s</span>
                         </div>
                         <div class="overview-trend" id="wind-trend">
                             <span class="trend-arrow">→</span>
-                            <span class="trend-text">NOMINAL</span>
+                            <span class="trend-text">NORMAL</span>
                         </div>
                     </div>
                     <div class="overview-card magnetic">
                         <div class="overview-icon">🧲</div>
                         <div class="overview-data">
-                            <span class="overview-label">MAGNETIC FIELD</span>
+                            <span class="overview-label">MANYETİK ALAN</span>
                             <span class="overview-value" id="overview-bt">--- nT</span>
                         </div>
                         <div class="overview-trend" id="bt-trend">
                             <span class="trend-arrow">→</span>
-                            <span class="trend-text">STABLE</span>
+                            <span class="trend-text">KARARLΙ</span>
                         </div>
                     </div>
                     <div class="overview-card radiation">
                         <div class="overview-icon">☢️</div>
                         <div class="overview-data">
-                            <span class="overview-label">RADIATION</span>
+                            <span class="overview-label">RADYASYON</span>
                             <span class="overview-value" id="overview-proton">--- pfu</span>
                         </div>
                         <div class="overview-trend" id="proton-trend">
                             <span class="trend-arrow">→</span>
-                            <span class="trend-text">NOMINAL</span>
+                            <span class="trend-text">NORMAL</span>
                         </div>
                     </div>
                     <div class="overview-card kp">
                         <div class="overview-icon">🌍</div>
                         <div class="overview-data">
-                            <span class="overview-label">Kp INDEX</span>
+                            <span class="overview-label">Kp İNDEKSİ</span>
                             <span class="overview-value" id="overview-kp">---</span>
                         </div>
                         <div class="overview-trend" id="kp-trend">
                             <span class="trend-arrow">→</span>
-                            <span class="trend-text">QUIET</span>
+                            <span class="trend-text">SAKIN</span>
                         </div>
                     </div>
                     <div class="overview-card alerts">
                         <div class="overview-icon">🔔</div>
                         <div class="overview-data">
-                            <span class="overview-label">ACTIVE ALERTS</span>
+                            <span class="overview-label">AKTİF UYARILAR</span>
                             <span class="overview-value" id="overview-alerts">0</span>
                         </div>
                         <div class="overview-trend">
-                            <span class="trend-text">MONITORED</span>
+                            <span class="trend-text">İZLENİYOR</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Analysis Section -->
+            <div class="ai-analysis-section reveal">
+                <div class="section-header">
+                    <h2>🤖 YAPAY ZEKA ANALİZİ</h2>
+                    <div class="ai-status">
+                        <span class="ai-indicator"></span>
+                        <span>AI AKTİF</span>
+                    </div>
+                </div>
+                <div class="ai-analysis-card">
+                    <div class="ai-header">
+                        <span class="ai-icon">🧠</span>
+                        <div class="ai-title">
+                            <span class="ai-label">GERÇEK ZAMANLI YORUM</span>
+                            <span class="ai-timestamp" id="ai-timestamp">--:--:--</span>
+                        </div>
+                    </div>
+                    <div class="ai-content">
+                        <div class="ai-message" id="ai-message">
+                            <p><strong>SAKIN UZAY HAVASI KOŞULLARI</strong></p>
+                            <p>Tüm parametreler normal aralıkta. Güneş rüzgarı nominal hızda, manyetik alan kararlı.</p>
+                            <p>Jeomanyetik aktivite düşük. Uydu operasyonları için ideal koşullar.</p>
+                        </div>
+                    </div>
+                    <div class="ai-metrics">
+                        <div class="ai-metric">
+                            <span class="ai-metric-label">Güvenilirlik</span>
+                            <span class="ai-metric-value" id="ai-confidence">85%</span>
+                        </div>
+                        <div class="ai-metric">
+                            <span class="ai-metric-label">Risk Seviyesi</span>
+                            <span class="ai-metric-value" id="ai-risk">DÜŞÜK</span>
+                        </div>
+                        <div class="ai-metric">
+                            <span class="ai-metric-label">Öneri</span>
+                            <span class="ai-metric-value" id="ai-recommendation">İZLEME DEVAM</span>
                         </div>
                     </div>
                 </div>
@@ -172,11 +213,11 @@
             <!-- Primary Telemetry Grid -->
             <div class="telemetry-section reveal">
                 <div class="section-header">
-                    <h2>📡 REAL-TIME TELEMETRY</h2>
+                    <h2>📡 GERÇEK ZAMANLI TELEMETRİ</h2>
                     <div class="section-controls">
-                        <button class="control-btn active">LIVE</button>
-                        <button class="control-btn">HISTORY</button>
-                        <button class="control-btn">EXPORT</button>
+                        <button class="control-btn active">CANLI</button>
+                        <button class="control-btn">GEÇMİŞ</button>
+                        <button class="control-btn">DIŞA AKTAR</button>
                     </div>
                 </div>
                 <div class="telemetry-grid">
@@ -184,7 +225,7 @@
                         <div class="telemetry-header">
                             <span class="telemetry-icon">🌪️</span>
                             <div class="telemetry-title">
-                                <span class="telemetry-label">SOLAR WIND VELOCITY</span>
+                                <span class="telemetry-label">GÜNEŞ RÜZGARI HIZI</span>
                                 <span class="telemetry-source">ACE/DSCOVR</span>
                             </div>
                         </div>
@@ -226,7 +267,7 @@
                         <div class="telemetry-header">
                             <span class="telemetry-icon">⚛️</span>
                             <div class="telemetry-title">
-                                <span class="telemetry-label">PLASMA DENSITY</span>
+                                <span class="telemetry-label">PLAZMA YOĞUNLUĞU</span>
                                 <span class="telemetry-source">ACE/SWEPAM</span>
                             </div>
                         </div>
@@ -268,7 +309,7 @@
                         <div class="telemetry-header">
                             <span class="telemetry-icon">🧲</span>
                             <div class="telemetry-title">
-                                <span class="telemetry-label">Bt MAGNITUDE</span>
+                                <span class="telemetry-label">Bt BÜYÜKLÜĞÜ</span>
                                 <span class="telemetry-source">ACE/MAG</span>
                             </div>
                         </div>
@@ -310,7 +351,7 @@
                         <div class="telemetry-header">
                             <span class="telemetry-icon">⬇️</span>
                             <div class="telemetry-title">
-                                <span class="telemetry-label">Bz COMPONENT</span>
+                                <span class="telemetry-label">Bz BİLEŞENİ</span>
                                 <span class="telemetry-source">ACE/MAG</span>
                             </div>
                         </div>
@@ -369,7 +410,7 @@
                     <div class="analytics-card">
                         <div class="analytics-header">
                             <span class="analytics-icon">🌪️</span>
-                            <span class="analytics-title">SOLAR WIND VELOCITY</span>
+                            <span class="analytics-title">GÜNEŞ RÜZGARI HIZI</span>
                         </div>
                         <div class="analytics-chart">
                             <canvas id="windChart"></canvas>
@@ -393,7 +434,7 @@
                     <div class="analytics-card">
                         <div class="analytics-header">
                             <span class="analytics-icon">⚠️</span>
-                            <span class="analytics-title">THREAT SCORE</span>
+                            <span class="analytics-title">TEHDİT SKORU</span>
                         </div>
                         <div class="analytics-chart">
                             <canvas id="threatChart"></canvas>
@@ -418,7 +459,7 @@
                     <div class="analytics-card">
                         <div class="analytics-header">
                             <span class="analytics-icon">🧲</span>
-                            <span class="analytics-title">MAGNETIC FIELD (Bt/Bz)</span>
+                            <span class="analytics-title">MANYETİK ALAN (Bt/Bz)</span>
                         </div>
                         <div class="analytics-chart">
                             <canvas id="magneticChart"></canvas>
@@ -428,7 +469,7 @@
                     <div class="analytics-card">
                         <div class="analytics-header">
                             <span class="analytics-icon">⚛️</span>
-                            <span class="analytics-title">PLASMA DENSITY</span>
+                            <span class="analytics-title">PLAZMA YOĞUNLUĞU</span>
                         </div>
                         <div class="analytics-chart">
                             <canvas id="densityChart"></canvas>
@@ -439,7 +480,7 @@
                     <div class="analytics-card">
                         <div class="analytics-header">
                             <span class="analytics-icon">🌍</span>
-                            <span class="analytics-title">Kp INDEX ACTIVITY</span>
+                            <span class="analytics-title">Kp İNDEKS AKTİVİTESİ</span>
                         </div>
                         <div class="analytics-chart">
                             <canvas id="kpChart"></canvas>
@@ -449,7 +490,7 @@
                     <div class="analytics-card">
                         <div class="analytics-header">
                             <span class="analytics-icon">📊</span>
-                            <span class="analytics-title">PARAMETER CORRELATION</span>
+                            <span class="analytics-title">PARAMETRE KORELASYONU</span>
                         </div>
                         <div class="analytics-chart">
                             <canvas id="correlationChart"></canvas>
@@ -461,7 +502,7 @@
             <!-- 3D Earth Globe with Satellite Data -->
             <div class="globe-section reveal">
                 <div class="section-header">
-                    <h2>🌍 GLOBAL SPACE WEATHER IMPACT</h2>
+                    <h2>🌍 KÜRESEL UZAY HAVASI ETKİSİ</h2>
                     <div class="globe-controls">
                         <button class="globe-btn active" data-view="aurora">AURORA</button>
                         <button class="globe-btn" data-view="satellites">SATELLITES</button>
@@ -839,31 +880,6 @@
 
                     <div class="satellite-card">
                         <div class="sat-header">
-                            <div class="sat-icon">🇹🇷</div>
-                            <div class="sat-info">
-                                <div class="sat-name">TÜRKSAT 5A</div>
-                                <div class="sat-location">Geostationary (42°E)</div>
-                            </div>
-                            <div class="sat-status online">AKTİF</div>
-                        </div>
-                        <div class="sat-metrics">
-                            <div class="sat-metric">
-                                <span class="metric-label">Sinyal Gücü</span>
-                                <span class="metric-value" id="turksat-signal">---</span>
-                            </div>
-                            <div class="sat-metric">
-                                <span class="metric-label">Kapsama</span>
-                                <span class="metric-value" id="turksat-coverage">---</span>
-                            </div>
-                            <div class="sat-metric">
-                                <span class="metric-label">Durum</span>
-                                <span class="metric-value" id="turksat-status">NOMINAL</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="satellite-card">
-                        <div class="sat-header">
                             <div class="sat-icon">🇨🇳</div>
                             <div class="sat-info">
                                 <div class="sat-name">FENGYUN-3E</div>
@@ -964,30 +980,6 @@
                 </div>
             </div>
 
-            <!-- NASA DONKI Events -->
-            <div class="donki-events-section reveal">
-                <div class="section-header">
-                    <h2>🚨 NASA DONKI - SPACE WEATHER EVENTS</h2>
-                    <div class="event-filters">
-                        <button class="event-filter-btn active" data-type="all">ALL</button>
-                        <button class="event-filter-btn" data-type="CME">CME</button>
-                        <button class="event-filter-btn" data-type="FLR">FLARE</button>
-                        <button class="event-filter-btn" data-type="GST">GEO STORM</button>
-                    </div>
-                </div>
-                <div class="donki-events-container">
-                    <div id="donki-events-list" class="events-list">
-                        <div class="event-item loading">
-                            <div class="event-icon">⏳</div>
-                            <div class="event-content">
-                                <div class="event-title">Loading NASA DONKI events...</div>
-                                <div class="event-desc">Fetching latest space weather notifications</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
     </div>
 </section>
 
@@ -995,11 +987,11 @@
 <footer class="dashboard-footer">
     <div class="footer-content">
         <div class="footer-minimal">
-            <span class="footer-logo">⚡ COSMIC BALANCE v3.0</span>
+            <span class="footer-logo">⚡ SOLARIS v3.0</span>
             <span class="footer-separator">|</span>
-            <span>MISSION: <strong id="footer-mission-time">00:00:00</strong></span>
+            <span>GÖREV: <strong id="footer-mission-time">00:00:00</strong></span>
             <span class="footer-separator">|</span>
-            <span>STATUS: <strong class="footer-status">OPERATIONAL</strong></span>
+            <span>DURUM: <strong class="footer-status">OPERASYONEL</strong></span>
         </div>
     </div>
 </footer>

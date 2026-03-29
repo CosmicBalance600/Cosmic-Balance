@@ -51,9 +51,9 @@ R_DIM      = "\033[2m"
 R_SIFIRLA  = "\033[0m"
 
 # Sanal Webhook uç nokta simülasyonları
-WEBHOOK_HAVACILIK = "https://api.icao.int/solaris/polar-route-divert"
-WEBHOOK_ENERJI    = "https://api.energy-grid.gov/solaris/load-shed"
-WEBHOOK_UYDU      = "https://api.satops.space/solaris/safe-mode"
+WEBHOOK_HAVACILIK = "https://example.com/api/havacilik/polar-route-divert"
+WEBHOOK_ENERJI    = "https://example.com/api/enerji/load-shed"
+WEBHOOK_UYDU      = "https://example.com/api/uydu/safe-mode"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

@@ -1,29 +1,115 @@
-# Python kalıntıları ve derlenmiş dosyalar
+# ═══════════════════════════════════════════════════════════
+#  SOLARIS-NETWORK :: .gitignore
+#  API anahtarları, veritabanı ve log dosyalarını korur
+# ═══════════════════════════════════════════════════════════
+
+# Ortam değişkenleri (API anahtarları, gizli bilgiler)
+.env
+.env.local
+.env.*.local
+
+# Python bytecode
 __pycache__/
 *.py[cod]
 *$py.class
-*.pyo
+*.so
+.Python
 
-# Gizli Anahtar ve Ayar Konfigürasyonları
-.env
-.env.local
-.secret/
+# Distribution / packaging
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# SQLite Cihaz ve Log Artıkları
-solaris_hafiza.db
-solaris_hafiza.db-shm
-solaris_hafiza.db-wal
-solaris_daemon.log
-solaris_daemon.log*
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Veritabanı dosyaları
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+
+# Log dosyaları
 *.log
+logs/
+*.log.*
 
-# Ortam ve Sanal Makineler
-.venv/
+# IDE / editör dosyaları
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# Environments
 venv/
 ENV/
 env/
-.env_win/
+.venv
 
-# Mac / İşletim Sistem Artıkları
-.DS_Store
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# OS generated files
 Thumbs.db
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Project specific
+screenshots/
+*.bak
+*.backup

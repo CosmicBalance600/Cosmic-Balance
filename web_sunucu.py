@@ -18,25 +18,32 @@
 
 import json
 import sqlite3
+import os
+import requests
 from datetime import datetime, timezone, timedelta
 
 from flask import Flask, g, jsonify
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from dotenv import load_dotenv
+
+# .env dosyasını yükle
+load_dotenv()
 
 # ── Merkezi Konfigürasyon ──
 from config import (
     PROJE_DIZINI, VERITABANI_YOLU,
     FLASK_HOST, FLASK_PORT,
     RATE_LIMIT_API,
+    WENOX_API_URL, WENOX_MODEL,
 )
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  UYGULAMA YAPILANDIRMASI
 # ═══════════════════════════════════════════════════════════════════════════════
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='Arayuz_UI', static_url_path='')
 CORS(app)  # Tüm originlerden gelen isteklere izin ver (frontend erişimi)
 
 # ── Rate Limiter (API Kalkanı) ──
@@ -201,6 +208,18 @@ def _son_aksiyonlar(dakika: int = 5) -> list:
 
 @app.route("/")
 def ana_sayfa():
+    """Ana sayfa - Dashboard'a yönlendir."""
+    from flask import redirect
+    return redirect("/dashboard.html")
+
+@app.route("/dashboard.html")
+def dashboard():
+    """Dashboard HTML sayfasını sun."""
+    from flask import send_from_directory
+    return send_from_directory('Arayuz_UI', 'dashboard.html')
+
+@app.route("/api/status")
+def api_status():
     """API durum kontrolü."""
     return jsonify({"durum": "Solaris API Aktif ve Çalışıyor"})
 
@@ -536,6 +555,134 @@ def donki_proxy():
             "durum": "hata",
             "mesaj": str(e),
             "events": []
+        }), 500
+
+
+@app.route("/api/ai_yorum", methods=["GET"])
+@limiter.limit("10 per minute")
+def ai_yorum():
+    """
+    Wenox AI kullanarak gerçek zamanlı yapay zeka yorumu üretir.
+    Telemetri ve analiz verilerini AI'ya gönderir ve yorum alır.
+    """
+    try:
+        # Son verileri al
+        telemetri = _son_telemetri()
+        analiz = _son_analiz()
+        
+        if not telemetri or not analiz:
+            return jsonify({
+                "durum": "hata",
+                "mesaj": "Yeterli veri yok",
+                "yorum": "Sistem verileri bekleniyor..."
+            }), 400
+        
+        # AI için prompt hazırla
+        hiz = telemetri.get("ruzgar_hizi", 0)
+        bt = telemetri.get("bt_gucu", 0)
+        bz = telemetri.get("bz_yonu", 0)
+        kp = telemetri.get("kp_indeksi", 0)
+        tehdit = analiz.get("tehdit_skoru", 0)
+        
+        prompt = f"""Sen bir uzay havası analiz uzmanısın. Aşağıdaki gerçek zamanlı güneş aktivitesi verilerini analiz et ve Türkçe olarak kısa, net bir yorum yap (maksimum 3-4 cümle):
+
+Güneş Rüzgarı Hızı: {hiz:.1f} km/s
+Manyetik Alan (Bt): {bt:.2f} nT
+Manyetik Alan Bz Bileşeni: {bz:.2f} nT
+Kp İndeksi: {kp:.1f}
+Tehdit Skoru: {tehdit:.1f}/10
+
+Yorumunda şunları belirt:
+1. Mevcut durum (sakin/orta/yüksek aktivite)
+2. Bz değerinin önemi (negatifse jeomanyetik fırtına riski)
+3. Uydu operatörleri veya elektrik şebekeleri için kısa öneri
+
+Teknik ama anlaşılır ol. Gereksiz detaya girme."""
+
+        # Wenox API'ye istek gönder
+        api_key = os.getenv("WENOX_API_KEY")
+        api_url = os.getenv("WENOX_API_URL", "https://claude.wenox.co/v1/messages")
+        
+        if not api_key:
+            return jsonify({
+                "durum": "hata",
+                "mesaj": "API key bulunamadı",
+                "yorum": "AI servisi yapılandırılmamış."
+            }), 500
+        
+        headers = {
+            "x-api-key": api_key,
+            "anthropic-version": "2023-06-01",
+            "content-type": "application/json"
+        }
+        
+        payload = {
+            "model": "claude-sonnet-4",
+            "max_tokens": 300,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+        }
+        
+        response = requests.post(
+            api_url,
+            headers=headers,
+            json=payload,
+            timeout=15
+        )
+        
+        if response.status_code == 200:
+            result = response.json()
+            ai_yorum_text = result.get("content", [{}])[0].get("text", "Yorum alınamadı")
+            
+            # Risk seviyesi belirle
+            if tehdit >= 7.0:
+                risk = "KRİTİK"
+                oneri = "ACİL ÖNLEM AL"
+                guvenilirlik = 95
+            elif tehdit >= 5.0:
+                risk = "YÜKSEK"
+                oneri = "DİKKATLİ İZLE"
+                guvenilirlik = 90
+            elif tehdit >= 3.0:
+                risk = "ORTA"
+                oneri = "NORMAL İZLEME"
+                guvenilirlik = 88
+            else:
+                risk = "DÜŞÜK"
+                oneri = "İZLEME DEVAM"
+                guvenilirlik = 85
+            
+            return jsonify({
+                "durum": "basarili",
+                "zaman": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                "yorum": ai_yorum_text,
+                "risk_seviyesi": risk,
+                "oneri": oneri,
+                "guvenilirlik": guvenilirlik,
+                "telemetri_ozet": {
+                    "hiz": hiz,
+                    "bt": bt,
+                    "bz": bz,
+                    "kp": kp,
+                    "tehdit": tehdit
+                }
+            })
+        else:
+            return jsonify({
+                "durum": "hata",
+                "mesaj": f"AI API hatası: {response.status_code}",
+                "yorum": "AI servisi geçici olarak kullanılamıyor."
+            }), 500
+            
+    except Exception as e:
+        return jsonify({
+            "durum": "hata",
+            "mesaj": str(e),
+            "yorum": "AI analizi yapılamadı."
         }), 500
 
 
