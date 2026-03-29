@@ -1,0 +1,29 @@
+# Python kalıntıları ve derlenmiş dosyalar
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Gizli Anahtar ve Ayar Konfigürasyonları
+.env
+.env.local
+.secret/
+
+# SQLite Cihaz ve Log Artıkları
+solaris_hafiza.db
+solaris_hafiza.db-shm
+solaris_hafiza.db-wal
+solaris_daemon.log
+solaris_daemon.log*
+*.log
+
+# Ortam ve Sanal Makineler
+.venv/
+venv/
+ENV/
+env/
+.env_win/
+
+# Mac / İşletim Sistem Artıkları
+.DS_Store
+Thumbs.db

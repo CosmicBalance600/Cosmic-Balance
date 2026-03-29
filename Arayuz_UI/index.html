@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Watch - Giriş</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            overflow: hidden;
+            background: #000;
+        }
+
+        /* Arka Plan Videosu - Tam Ekran */
+        .bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0.85; 
+        }
+
+        /* Yıldız Efekti - index 2'den korundu */
+        #canvas-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Kayan Yıldızlar - Sol Taraf Tam */
+        #shooting-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 50vw;
+            height: 100vh;
+            z-index: 2;
+            pointer-events: auto;
+        }
+
+        .hero-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Arayüz - Görseldeki gibi sola hizalı */
+        .hero-content {
+            position: absolute;
+            top: 25%;
+            left: 8%;
+            z-index: 10;
+            text-align: left;
+            max-width: 600px;
+        }
+
+        .main-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #00f3ff;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
+            margin-bottom: 20px;
+            line-height: 1.1;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .sub-title {
+            font-size: 1.2rem;
+            color: #a0aec0;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Görseldeki sol taraftaki ince mavi çizgi detayı */
+        .sub-title::before {
+            content: '';
+            display: inline-block;
+            width: 3px;
+            height: 18px;
+            background-color: #00f3ff;
+            box-shadow: 0 0 10px #00f3ff;
+        }
+
+        /* Buton - index 2'deki gösterge ve ilk arayüzün neon tasarımı */
+        .watch-live-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 30px;
+            background: rgba(0, 0, 0, 0.4);
+            color: #00f3ff;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            border: 2px solid #00f3ff;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            box-shadow: inset 0 0 10px rgba(0, 243, 255, 0.2);
+            backdrop-filter: blur(5px);
+            z-index: 10;
+        }
+
+        .watch-live-btn:hover {
+            background: rgba(0, 243, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.6), inset 0 0 15px rgba(0, 243, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .live-indicator {
+            width: 10px;
+            height: 10px;
+            background: #ff003c;
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+            box-shadow: 0 0 10px #ff003c;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0.3; }
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+            .hero-content {
+                left: 5%;
+                top: 20%;
+                padding-right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas-stars"></canvas>
+    <canvas id="shooting-stars"></canvas>
+
+    <div class="hero-container">
+        <video autoplay loop muted playsinline class="bg-video">
+            <source src="dunya.mp4" type="video/mp4">
+        </video>
+
+        <div class="hero-content">
+            <h1 class="main-title">GÜNEŞ FIRTINASI TAKİP<br>SİSTEMİ</h1>
+            <p class="sub-title">Dünyayı etkileyen kozmik olayları anlık izleyin.</p>
+            
+            <a href="dashboard.html" class="watch-live-btn">
+                <span class="live-indicator"></span>
+                ANLIK VERİYİ İZLE
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas-stars');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const stars = [];
+        const starCount = 200;
+        
+        class Star {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5;
+                this.alpha = Math.random() * 0.8 + 0.2;
+                this.blinkSpeed = Math.random() * 0.01 + 0.005;
+            }
+            
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            update() {
+                this.alpha += this.blinkSpeed;
+                if (this.alpha > 1 || this.alpha < 0.1) {
+                    this.blinkSpeed *= -1;
+                }
+            }
+        }
+        
+        for (let i = 0; i < starCount; i++) {
+            stars.push(new Star());
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+        // Kayan Yıldız Animasyonu (Sağ Üstten Sol Alta Çapraz - Arada Bir)
+        const shootingCanvas = document.getElementById('shooting-stars');
+        const shootingCtx = shootingCanvas.getContext('2d');
+        
+        shootingCanvas.width = window.innerWidth * 0.5;
+        shootingCanvas.height = window.innerHeight;
+        
+        let shootingStar = null;
+        let nextShootingTime = Date.now() + Math.random() * 3000 + 2000;
+        const mouseParticles = [];
+        
+        class ShootingStar {
+            constructor() {
+                this.x = shootingCanvas.width + 50;
+                this.y = -50;
+                this.length = Math.random() * 80 + 60;
+                this.speed = Math.random() * 4 + 6;
+                this.opacity = Math.random() * 0.3 + 0.7;
+                this.vx = -this.speed * 0.7; // Sol yönde hareket
+                this.vy = this.speed * 0.7;  // Aşağı yönde hareket
+            }
+            
+            draw() {
+                shootingCtx.save();
+                
+                // Yıldızın başlangıç ve bitiş noktaları (çapraz çizgi)
+                const endX = this.x - this.length * 0.7;
+                const endY = this.y + this.length * 0.7;
+                
+                const gradient = shootingCtx.createLinearGradient(this.x, this.y, endX, endY);
+                gradient.addColorStop(0, `rgba(255, 255, 255, ${this.opacity})`);
+                gradient.addColorStop(0.5, `rgba(255, 255, 255, ${this.opacity * 0.6})`);
+                gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+                
+                shootingCtx.strokeStyle = gradient;
+                shootingCtx.lineWidth = 2.5;
+                shootingCtx.shadowBlur = 10;
+                shootingCtx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+                shootingCtx.beginPath();
+                shootingCtx.moveTo(this.x, this.y);
+                shootingCtx.lineTo(endX, endY);
+                shootingCtx.stroke();
+                
+                shootingCtx.restore();
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+            }
+            
+            isOffScreen() {
+                return this.x < -this.length || this.y > shootingCanvas.height + this.length;
+            }
+        }
+        
+        // Mouse Partikülleri
+        class MouseParticle {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 3;
+                this.speedY = (Math.random() - 0.5) * 3;
+                this.life = 1;
+                this.decay = Math.random() * 0.02 + 0.01;
+            }
+            
+            draw() {
+                shootingCtx.save();
+                shootingCtx.fillStyle = `rgba(255, 255, 255, ${this.life})`;
+                shootingCtx.shadowBlur = 5;
+                shootingCtx.shadowColor = 'rgba(255, 255, 255, 0.8)';
+                shootingCtx.beginPath();
+                shootingCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                shootingCtx.fill();
+                shootingCtx.restore();
+            }
+            
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= this.decay;
+            }
+        }
+        
+        // Mouse hareket eventi
+        shootingCanvas.addEventListener('mousemove', (e) => {
+            const rect = shootingCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            for (let i = 0; i < 3; i++) {
+                mouseParticles.push(new MouseParticle(x, y));
+            }
+        });
+        
+        function animateShootingStars() {
+            shootingCtx.clearRect(0, 0, shootingCanvas.width, shootingCanvas.height);
+            
+            // Arada bir kayan yıldız oluştur
+            const now = Date.now();
+            if (!shootingStar && now >= nextShootingTime) {
+                shootingStar = new ShootingStar();
+                nextShootingTime = now + Math.random() * 4000 + 2000; // 2-6 saniye arası
+            }
+            
+            // Kayan yıldızı güncelle ve çiz
+            if (shootingStar) {
+                shootingStar.update();
+                shootingStar.draw();
+                
+                if (shootingStar.isOffScreen()) {
+                    shootingStar = null;
+                }
+            }
+            
+            // Mouse partikülleri
+            for (let i = mouseParticles.length - 1; i >= 0; i--) {
+                mouseParticles[i].update();
+                mouseParticles[i].draw();
+                
+                if (mouseParticles[i].life <= 0) {
+                    mouseParticles.splice(i, 1);
+                }
+            }
+            
+            requestAnimationFrame(animateShootingStars);
+        }
+        
+        animateShootingStars();
+        
+        window.addEventListener('resize', () => {
+            shootingCanvas.width = window.innerWidth * 0.5;
+            shootingCanvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>

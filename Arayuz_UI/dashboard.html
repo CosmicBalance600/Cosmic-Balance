@@ -1,0 +1,1010 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLARIS MISSION CONTROL - Advanced Space Weather Operations Center</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+</head>
+<body>
+    
+    <!-- Background Effects -->
+    <div class="galaxy-bg"></div>
+    <canvas id="canvas-stars"></canvas>
+    <div class="grid-overlay"></div>
+    <div class="scan-line"></div>
+
+    <!-- Emergency Alert Banner -->
+    <div id="emergency-banner" class="emergency-banner hidden">
+        <div class="emergency-content">
+            <span class="emergency-icon">⚠️</span>
+            <span class="emergency-text">GEOMAGNETIC STORM WARNING</span>
+            <span class="emergency-level">G3 - STRONG</span>
+            <button class="emergency-dismiss" onclick="dismissAlert()">✕</button>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Section -->
+    <section id="section-dashboard" style="min-height: 100vh;">
+        
+        <!-- Enhanced Top Navigation -->
+        <nav class="top-nav reveal">
+            <div class="nav-left">
+                <span class="nav-logo">⚡ COSMIC BALANCE</span>
+                <span class="nav-mission">SWOC v3.0</span>
+                <div class="nav-breadcrumb">
+                    <span>OPERATIONS</span>
+                    <span class="breadcrumb-sep">›</span>
+                    <span>REAL-TIME MONITORING</span>
+                </div>
+            </div>
+            <div class="nav-center">
+                <div class="time-display">
+                    <span class="time-label">UTC</span>
+                    <span id="utc-time" class="time-value">--:--:--</span>
+                    <span id="utc-date" class="time-date">----/--/--</span>
+                </div>
+                <div class="time-display">
+                    <span class="time-label">LOCAL</span>
+                    <span id="local-time" class="time-value">--:--:--</span>
+                    <span id="local-date" class="time-date">----/--/--</span>
+                </div>
+                <div class="time-display">
+                    <span class="time-label">MISSION</span>
+                    <span id="mission-time" class="time-value">--:--:--</span>
+                    <span class="time-date">ELAPSED</span>
+                </div>
+            </div>
+            <div class="nav-right">
+                <div class="connection-status">
+                    <span class="conn-dot"></span>
+                    <span>LIVE</span>
+                    <span class="conn-latency" id="latency">~50ms</span>
+                </div>
+                <button class="nav-btn" onclick="toggleFullscreen()">
+                    <span>⛶</span>
+                </button>
+            </div>
+        </nav>
+
+        <div class="dashboard-container">
+            
+            <!-- Earth Video Section -->
+            <div class="earth-video-section reveal">
+                <div class="earth-video-container-dash">
+                    <video autoplay muted loop playsinline class="earth-video-dash">
+                        <source src="gunes.mp4" type="video/mp4">
+                    </video>
+                    <div class="earth-video-info">
+                        <div class="earth-info-item">
+                            <span class="earth-info-label">COSMIC BALANCE</span>
+                            <span class="earth-info-value">Güneş Aktivitesini Gerçek Zamanlı Takip Et</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Critical Status Overview -->
+            <div class="critical-overview reveal">
+                <div class="overview-header">
+                    <h2>🎯 MISSION CRITICAL STATUS</h2>
+                    <div class="overview-timestamp">
+                        <span>LAST UPDATE:</span>
+                        <span id="last-update-time">--:--:--</span>
+                    </div>
+                </div>
+                <div class="overview-grid">
+                    <div class="overview-card threat">
+                        <div class="overview-icon">⚠️</div>
+                        <div class="overview-data">
+                            <span class="overview-label">THREAT LEVEL</span>
+                            <span class="overview-value" id="overview-threat">G0</span>
+                        </div>
+                        <div class="overview-trend" id="threat-trend">
+                            <span class="trend-arrow">→</span>
+                            <span class="trend-text">STABLE</span>
+                        </div>
+                    </div>
+                    <div class="overview-card wind">
+                        <div class="overview-icon">🌪️</div>
+                        <div class="overview-data">
+                            <span class="overview-label">SOLAR WIND</span>
+                            <span class="overview-value" id="overview-wind">--- km/s</span>
+                        </div>
+                        <div class="overview-trend" id="wind-trend">
+                            <span class="trend-arrow">→</span>
+                            <span class="trend-text">NOMINAL</span>
+                        </div>
+                    </div>
+                    <div class="overview-card magnetic">
+                        <div class="overview-icon">🧲</div>
+                        <div class="overview-data">
+                            <span class="overview-label">MAGNETIC FIELD</span>
+                            <span class="overview-value" id="overview-bt">--- nT</span>
+                        </div>
+                        <div class="overview-trend" id="bt-trend">
+                            <span class="trend-arrow">→</span>
+                            <span class="trend-text">STABLE</span>
+                        </div>
+                    </div>
+                    <div class="overview-card radiation">
+                        <div class="overview-icon">☢️</div>
+                        <div class="overview-data">
+                            <span class="overview-label">RADIATION</span>
+                            <span class="overview-value" id="overview-proton">--- pfu</span>
+                        </div>
+                        <div class="overview-trend" id="proton-trend">
+                            <span class="trend-arrow">→</span>
+                            <span class="trend-text">NOMINAL</span>
+                        </div>
+                    </div>
+                    <div class="overview-card kp">
+                        <div class="overview-icon">🌍</div>
+                        <div class="overview-data">
+                            <span class="overview-label">Kp INDEX</span>
+                            <span class="overview-value" id="overview-kp">---</span>
+                        </div>
+                        <div class="overview-trend" id="kp-trend">
+                            <span class="trend-arrow">→</span>
+                            <span class="trend-text">QUIET</span>
+                        </div>
+                    </div>
+                    <div class="overview-card alerts">
+                        <div class="overview-icon">🔔</div>
+                        <div class="overview-data">
+                            <span class="overview-label">ACTIVE ALERTS</span>
+                            <span class="overview-value" id="overview-alerts">0</span>
+                        </div>
+                        <div class="overview-trend">
+                            <span class="trend-text">MONITORED</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Primary Telemetry Grid -->
+            <div class="telemetry-section reveal">
+                <div class="section-header">
+                    <h2>📡 REAL-TIME TELEMETRY</h2>
+                    <div class="section-controls">
+                        <button class="control-btn active">LIVE</button>
+                        <button class="control-btn">HISTORY</button>
+                        <button class="control-btn">EXPORT</button>
+                    </div>
+                </div>
+                <div class="telemetry-grid">
+                    <div class="telemetry-card">
+                        <div class="telemetry-header">
+                            <span class="telemetry-icon">🌪️</span>
+                            <div class="telemetry-title">
+                                <span class="telemetry-label">SOLAR WIND VELOCITY</span>
+                                <span class="telemetry-source">ACE/DSCOVR</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-main">
+                            <div class="telemetry-value" id="tel-speed">---</div>
+                            <div class="telemetry-unit">km/s</div>
+                        </div>
+                        <div class="telemetry-bar-container">
+                            <div class="telemetry-bar">
+                                <div class="telemetry-bar-fill" id="bar-speed"></div>
+                                <div class="telemetry-threshold" style="left: 40%"></div>
+                                <div class="telemetry-threshold critical" style="left: 70%"></div>
+                            </div>
+                            <div class="telemetry-bar-labels">
+                                <span>0</span>
+                                <span>400</span>
+                                <span>700</span>
+                                <span>1000</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-stats">
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">MIN</span>
+                                <span class="stat-mini-value" id="speed-min">---</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">AVG</span>
+                                <span class="stat-mini-value" id="speed-avg">---</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">MAX</span>
+                                <span class="stat-mini-value" id="speed-max">---</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-status" id="status-speed">NOMINAL</div>
+                    </div>
+
+                    <div class="telemetry-card">
+                        <div class="telemetry-header">
+                            <span class="telemetry-icon">⚛️</span>
+                            <div class="telemetry-title">
+                                <span class="telemetry-label">PLASMA DENSITY</span>
+                                <span class="telemetry-source">ACE/SWEPAM</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-main">
+                            <div class="telemetry-value" id="tel-density">---</div>
+                            <div class="telemetry-unit">p/cm³</div>
+                        </div>
+                        <div class="telemetry-bar-container">
+                            <div class="telemetry-bar">
+                                <div class="telemetry-bar-fill" id="bar-density"></div>
+                                <div class="telemetry-threshold" style="left: 20%"></div>
+                                <div class="telemetry-threshold critical" style="left: 50%"></div>
+                            </div>
+                            <div class="telemetry-bar-labels">
+                                <span>0</span>
+                                <span>20</span>
+                                <span>50</span>
+                                <span>100</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-stats">
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">MIN</span>
+                                <span class="stat-mini-value" id="density-min">---</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">AVG</span>
+                                <span class="stat-mini-value" id="density-avg">---</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">MAX</span>
+                                <span class="stat-mini-value" id="density-max">---</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-status" id="status-density">NOMINAL</div>
+                    </div>
+
+                    <div class="telemetry-card">
+                        <div class="telemetry-header">
+                            <span class="telemetry-icon">🧲</span>
+                            <div class="telemetry-title">
+                                <span class="telemetry-label">Bt MAGNITUDE</span>
+                                <span class="telemetry-source">ACE/MAG</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-main">
+                            <div class="telemetry-value" id="tel-bt">---</div>
+                            <div class="telemetry-unit">nT</div>
+                        </div>
+                        <div class="telemetry-bar-container">
+                            <div class="telemetry-bar">
+                                <div class="telemetry-bar-fill" id="bar-bt"></div>
+                                <div class="telemetry-threshold" style="left: 20%"></div>
+                                <div class="telemetry-threshold critical" style="left: 40%"></div>
+                            </div>
+                            <div class="telemetry-bar-labels">
+                                <span>0</span>
+                                <span>10</span>
+                                <span>20</span>
+                                <span>50</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-stats">
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">MIN</span>
+                                <span class="stat-mini-value" id="bt-min">---</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">AVG</span>
+                                <span class="stat-mini-value" id="bt-avg">---</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">MAX</span>
+                                <span class="stat-mini-value" id="bt-max">---</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-status" id="status-bt">NOMINAL</div>
+                    </div>
+
+                    <div class="telemetry-card">
+                        <div class="telemetry-header">
+                            <span class="telemetry-icon">⬇️</span>
+                            <div class="telemetry-title">
+                                <span class="telemetry-label">Bz COMPONENT</span>
+                                <span class="telemetry-source">ACE/MAG</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-main">
+                            <div class="telemetry-value" id="tel-bz">---</div>
+                            <div class="telemetry-unit">nT</div>
+                        </div>
+                        <div class="telemetry-bar-container">
+                            <div class="telemetry-bar bz-bar">
+                                <div class="telemetry-bar-center"></div>
+                                <div class="telemetry-bar-fill" id="bar-bz"></div>
+                                <div class="telemetry-threshold" style="left: 25%"></div>
+                                <div class="telemetry-threshold critical" style="left: 10%"></div>
+                            </div>
+                            <div class="telemetry-bar-labels">
+                                <span>-20</span>
+                                <span>-10</span>
+                                <span>0</span>
+                                <span>+10</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-stats">
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">MIN</span>
+                                <span class="stat-mini-value" id="bz-min">---</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">AVG</span>
+                                <span class="stat-mini-value" id="bz-avg">---</span>
+                            </div>
+                            <div class="stat-mini">
+                                <span class="stat-mini-label">MAX</span>
+                                <span class="stat-mini-value" id="bz-max">---</span>
+                            </div>
+                        </div>
+                        <div class="telemetry-status" id="status-bz">NOMINAL</div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Advanced Analytics Grid -->
+            <div class="analytics-section reveal">
+                <div class="section-header">
+                    <h2>📈 GELİŞMİŞ ANALİTİK VE GÖRSELLEŞTİRME</h2>
+                    <div class="chart-timeframe-selector">
+                        <button class="timeframe-btn active">1H</button>
+                        <button class="timeframe-btn">6H</button>
+                        <button class="timeframe-btn">24H</button>
+                        <button class="timeframe-btn">7D</button>
+                    </div>
+                </div>
+                
+                <div class="analytics-grid">
+                    <!-- Row 1: Solar Wind & Threat -->
+                    <div class="analytics-card">
+                        <div class="analytics-header">
+                            <span class="analytics-icon">🌪️</span>
+                            <span class="analytics-title">SOLAR WIND VELOCITY</span>
+                        </div>
+                        <div class="analytics-chart">
+                            <canvas id="windChart"></canvas>
+                        </div>
+                        <div class="analytics-stats">
+                            <div class="stat-box">
+                                <span class="stat-label">AVG</span>
+                                <span class="stat-value" id="wind-chart-avg">---</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">PEAK</span>
+                                <span class="stat-value" id="wind-chart-peak">---</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">TREND</span>
+                                <span class="stat-value" id="wind-chart-trend">STABLE</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="analytics-header">
+                            <span class="analytics-icon">⚠️</span>
+                            <span class="analytics-title">THREAT SCORE</span>
+                        </div>
+                        <div class="analytics-chart">
+                            <canvas id="threatChart"></canvas>
+                        </div>
+                        <div class="analytics-stats">
+                            <div class="stat-box">
+                                <span class="stat-label">CURRENT</span>
+                                <span class="stat-value" id="threat-chart-current">---</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">MAX</span>
+                                <span class="stat-value" id="threat-chart-max">---</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="stat-label">STATUS</span>
+                                <span class="stat-value" id="threat-chart-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Magnetic Field & Density -->
+                    <div class="analytics-card">
+                        <div class="analytics-header">
+                            <span class="analytics-icon">🧲</span>
+                            <span class="analytics-title">MAGNETIC FIELD (Bt/Bz)</span>
+                        </div>
+                        <div class="analytics-chart">
+                            <canvas id="magneticChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="analytics-header">
+                            <span class="analytics-icon">⚛️</span>
+                            <span class="analytics-title">PLASMA DENSITY</span>
+                        </div>
+                        <div class="analytics-chart">
+                            <canvas id="densityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Kp Index & Correlation -->
+                    <div class="analytics-card">
+                        <div class="analytics-header">
+                            <span class="analytics-icon">🌍</span>
+                            <span class="analytics-title">Kp INDEX ACTIVITY</span>
+                        </div>
+                        <div class="analytics-chart">
+                            <canvas id="kpChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="analytics-header">
+                            <span class="analytics-icon">📊</span>
+                            <span class="analytics-title">PARAMETER CORRELATION</span>
+                        </div>
+                        <div class="analytics-chart">
+                            <canvas id="correlationChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3D Earth Globe with Satellite Data -->
+            <div class="globe-section reveal">
+                <div class="section-header">
+                    <h2>🌍 GLOBAL SPACE WEATHER IMPACT</h2>
+                    <div class="globe-controls">
+                        <button class="globe-btn active" data-view="aurora">AURORA</button>
+                        <button class="globe-btn" data-view="satellites">SATELLITES</button>
+                        <button class="globe-btn" data-view="radiation">RADIATION</button>
+                    </div>
+                </div>
+                <div class="globe-container">
+                    <div id="earth-globe" class="earth-canvas"></div>
+                    <div class="globe-info-panel">
+                        <div class="globe-info-card">
+                            <div class="info-label">AURORA VISIBILITY</div>
+                            <div class="info-value" id="aurora-visibility">MODERATE</div>
+                            <div class="info-desc">Kp Index: <span id="aurora-kp">3.0</span></div>
+                        </div>
+                        <div class="globe-info-card">
+                            <div class="info-label">ACTIVE SATELLITES</div>
+                            <div class="info-value" id="active-satellites">5</div>
+                            <div class="info-desc">Monitoring Status: ONLINE</div>
+                        </div>
+                        <div class="globe-info-card">
+                            <div class="info-label">RADIATION LEVEL</div>
+                            <div class="info-value" id="radiation-level">LOW</div>
+                            <div class="info-desc">Proton Flux: <span id="proton-flux">---</span> pfu</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Turkish Satellites Section -->
+            <div class="satellite-data-section reveal">
+                <div class="section-header">
+                    <h2>🇹🇷 TÜRKİYE UYDULARI</h2>
+                    <div class="data-refresh">
+                        <span class="refresh-icon">🔄</span>
+                        <span>OTOMATİK YENİLEME: AÇIK</span>
+                    </div>
+                </div>
+                <div class="satellite-grid">
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">TÜRKSAT 5A</div>
+                                <div class="sat-location">Geostationary (42°E)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Sinyal Gücü</span>
+                                <span class="metric-value" id="turksat5a-signal">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Kapsama</span>
+                                <span class="metric-value" id="turksat5a-coverage">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="turksat5a-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">TÜRKSAT 5B</div>
+                                <div class="sat-location">Geostationary (42°E)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Sinyal Gücü</span>
+                                <span class="metric-value" id="turksat5b-signal">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Bant Genişliği</span>
+                                <span class="metric-value" id="turksat5b-bandwidth">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="turksat5b-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">TÜRKSAT 4A</div>
+                                <div class="sat-location">Geostationary (42°E)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Transponderler</span>
+                                <span class="metric-value" id="turksat4a-transponders">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Kapsama</span>
+                                <span class="metric-value" id="turksat4a-coverage">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="turksat4a-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">TÜRKSAT 4B</div>
+                                <div class="sat-location">Geostationary (50°E)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Transponderler</span>
+                                <span class="metric-value" id="turksat4b-transponders">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Kapsama</span>
+                                <span class="metric-value" id="turksat4b-coverage">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="turksat4b-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">TÜRKSAT 3A</div>
+                                <div class="sat-location">Geostationary (42°E)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Hizmet Yılı</span>
+                                <span class="metric-value" id="turksat3a-years">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Kapsama</span>
+                                <span class="metric-value" id="turksat3a-coverage">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="turksat3a-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">RASAT</div>
+                                <div class="sat-location">Sun-Synchronous (700 km)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Çözünürlük</span>
+                                <span class="metric-value" id="rasat-resolution">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Görüntüleme Modu</span>
+                                <span class="metric-value" id="rasat-mode">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="rasat-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">GÖKTÜRK-1</div>
+                                <div class="sat-location">Sun-Synchronous (680 km)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Çözünürlük</span>
+                                <span class="metric-value" id="gokturk1-resolution">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Görev</span>
+                                <span class="metric-value" id="gokturk1-mission">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="gokturk1-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">GÖKTÜRK-2</div>
+                                <div class="sat-location">Sun-Synchronous (685 km)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Çözünürlük</span>
+                                <span class="metric-value" id="gokturk2-resolution">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Görev</span>
+                                <span class="metric-value" id="gokturk2-mission">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="gokturk2-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">İMECE</div>
+                                <div class="sat-location">Sun-Synchronous (680 km)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Çözünürlük</span>
+                                <span class="metric-value" id="imece-resolution">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Görüntüleme</span>
+                                <span class="metric-value" id="imece-imaging">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="imece-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- International Satellite Data Sources -->
+            <div class="satellite-data-section reveal">
+                <div class="section-header">
+                    <h2>🛰️ ULUSLARARASI UYDU VERİ KAYNAKLARI</h2>
+                    <div class="data-refresh">
+                        <span class="refresh-icon">🔄</span>
+                        <span>OTOMATİK YENİLEME: AÇIK</span>
+                    </div>
+                </div>
+                <div class="satellite-grid">
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇺🇸</div>
+                            <div class="sat-info">
+                                <div class="sat-name">DSCOVR</div>
+                                <div class="sat-location">L1 Point (1.5M km)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Güneş Rüzgarı</span>
+                                <span class="metric-value" id="dscovr-wind">--- km/s</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Manyetik Alan</span>
+                                <span class="metric-value" id="dscovr-bt">--- nT</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Yoğunluk</span>
+                                <span class="metric-value" id="dscovr-density">--- p/cm³</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇺🇸</div>
+                            <div class="sat-info">
+                                <div class="sat-name">ACE</div>
+                                <div class="sat-location">L1 Point (1.5M km)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Güneş Rüzgarı</span>
+                                <span class="metric-value" id="ace-wind">--- km/s</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Proton Akısı</span>
+                                <span class="metric-value" id="ace-proton">--- pfu</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Sıcaklık</span>
+                                <span class="metric-value" id="ace-temp">--- K</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇺🇸</div>
+                            <div class="sat-info">
+                                <div class="sat-name">GOES-16</div>
+                                <div class="sat-location">Geostationary (35,786 km)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">X-Işını Akısı</span>
+                                <span class="metric-value" id="goes-xray">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Protonlar</span>
+                                <span class="metric-value" id="goes-proton">--- pfu</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Elektronlar</span>
+                                <span class="metric-value" id="goes-electron">---</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇺🇸</div>
+                            <div class="sat-info">
+                                <div class="sat-name">SDO</div>
+                                <div class="sat-location">Geosynchronous Orbit</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Güneş Lekesi Sayısı</span>
+                                <span class="metric-value" id="sdo-sunspots">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Aktif Bölgeler</span>
+                                <span class="metric-value" id="sdo-regions">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Parlama Aktivitesi</span>
+                                <span class="metric-value" id="sdo-flares">QUIET</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">TÜRKSAT 5A</div>
+                                <div class="sat-location">Geostationary (42°E)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Sinyal Gücü</span>
+                                <span class="metric-value" id="turksat-signal">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Kapsama</span>
+                                <span class="metric-value" id="turksat-coverage">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="turksat-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇨🇳</div>
+                            <div class="sat-info">
+                                <div class="sat-name">FENGYUN-3E</div>
+                                <div class="sat-location">Sun-Synchronous (836 km)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Güneş Rüzgarı</span>
+                                <span class="metric-value" id="fengyun-wind">--- km/s</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Manyetik Alan</span>
+                                <span class="metric-value" id="fengyun-bt">--- nT</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Parçacıklar</span>
+                                <span class="metric-value" id="fengyun-particles">---</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇨🇳</div>
+                            <div class="sat-info">
+                                <div class="sat-name">KUAFU-1</div>
+                                <div class="sat-location">L1 Point (1.5M km)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Güneş Rüzgarı</span>
+                                <span class="metric-value" id="kuafu-wind">--- km/s</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">CME Tespiti</span>
+                                <span class="metric-value" id="kuafu-cme">YOK</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">X-Işını</span>
+                                <span class="metric-value" id="kuafu-xray">---</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇷🇺</div>
+                            <div class="sat-info">
+                                <div class="sat-name">ELECTRO-L N3</div>
+                                <div class="sat-location">Geostationary (76°E)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Güneş Aktivitesi</span>
+                                <span class="metric-value" id="electro-solar">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Manyetik Alan</span>
+                                <span class="metric-value" id="electro-mag">--- nT</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Parçacıklar</span>
+                                <span class="metric-value" id="electro-particles">---</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
+                            <div class="sat-icon">🇯🇵</div>
+                            <div class="sat-info">
+                                <div class="sat-name">HIMAWARI-9</div>
+                                <div class="sat-location">Geostationary (140.7°E)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Güneş Radyasyonu</span>
+                                <span class="metric-value" id="himawari-radiation">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Uzay Hava Durumu</span>
+                                <span class="metric-value" id="himawari-weather">NORMAL</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">X-Işını Akısı</span>
+                                <span class="metric-value" id="himawari-xray">---</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NASA DONKI Events -->
+            <div class="donki-events-section reveal">
+                <div class="section-header">
+                    <h2>🚨 NASA DONKI - SPACE WEATHER EVENTS</h2>
+                    <div class="event-filters">
+                        <button class="event-filter-btn active" data-type="all">ALL</button>
+                        <button class="event-filter-btn" data-type="CME">CME</button>
+                        <button class="event-filter-btn" data-type="FLR">FLARE</button>
+                        <button class="event-filter-btn" data-type="GST">GEO STORM</button>
+                    </div>
+                </div>
+                <div class="donki-events-container">
+                    <div id="donki-events-list" class="events-list">
+                        <div class="event-item loading">
+                            <div class="event-icon">⏳</div>
+                            <div class="event-content">
+                                <div class="event-title">Loading NASA DONKI events...</div>
+                                <div class="event-desc">Fetching latest space weather notifications</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+</section>
+
+<!-- Minimal Footer -->
+<footer class="dashboard-footer">
+    <div class="footer-content">
+        <div class="footer-minimal">
+            <span class="footer-logo">⚡ COSMIC BALANCE v3.0</span>
+            <span class="footer-separator">|</span>
+            <span>MISSION: <strong id="footer-mission-time">00:00:00</strong></span>
+            <span class="footer-separator">|</span>
+            <span>STATUS: <strong class="footer-status">OPERATIONAL</strong></span>
+        </div>
+    </div>
+</footer>
+
+<script src="globe-earth.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
