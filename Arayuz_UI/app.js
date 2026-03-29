@@ -6,6 +6,11 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 // ═══════════════════════════════════════════════════════════════════════════
+//  API CONFIGURATION (CORS ve Localhost Desteği İçin)
+// ═══════════════════════════════════════════════════════════════════════════
+const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:5000' : '';
+
+// ═══════════════════════════════════════════════════════════════════════════
 //  GLOBAL STATE MANAGEMENT
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -227,7 +232,7 @@ async function initCharts() {
     let initialKpData = Array.from({length: 50}, () => 2);
 
     try {
-        const response = await fetch('/api/tarihsel');
+        const response = await fetch(`${API_BASE}/api/tarihsel`);
         if (response.ok) {
             const tarihselVeri = await response.json();
             if (tarihselVeri.length > 0) {
@@ -492,7 +497,7 @@ async function updateAIAnalysis() {
     if (!aiMessage) return;
     
     try {
-        const response = await fetch('/api/ai_yorum');
+        const response = await fetch(`${API_BASE}/api/ai_yorum`);
         
         if (!response.ok) {
             throw new Error('AI API yanıt vermedi');
@@ -520,7 +525,7 @@ async function updateAIAnalysis() {
 
 async function updateDashboard() {
     try {
-        const response = await fetch('/api/canli_veri');
+        const response = await fetch(`${API_BASE}/api/canli_veri`);
         if (!response.ok) throw new Error("API Connection Failed");
         
         const data = await response.json();
@@ -796,7 +801,7 @@ function toggleFullscreen() {
 
 async function fetchSatelliteData() {
     try {
-        const response = await fetch('/api/uydu_verileri');
+        const response = await fetch(`${API_BASE}/api/uydu_verileri`);
         if (!response.ok) return;
         
         const data = await response.json();
