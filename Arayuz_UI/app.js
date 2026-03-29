@@ -8,7 +8,7 @@
 // ═══════════════════════════════════════════════════════════════════════════
 //  API CONFIGURATION (CORS ve Localhost Desteği İçin)
 // ═══════════════════════════════════════════════════════════════════════════
-const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:5000' : '';
+const API_BASE = window.location.protocol === 'file:' ? 'http://127.0.0.1:5000' : '';
 
 // ═══════════════════════════════════════════════════════════════════════════
 //  GLOBAL STATE MANAGEMENT
@@ -483,46 +483,6 @@ function updateMetricStatus(elementId, value, thresholds) {
 }
 
 
-// ═══════════════════════════════════════════════════════════════════════════
-//  AI ANALYSIS SYSTEM
-// ═══════════════════════════════════════════════════════════════════════════
-
-async function updateAIAnalysis() {
-    const aiMessage = document.getElementById('ai-message');
-    const aiTimestamp = document.getElementById('ai-timestamp');
-    const aiConfidence = document.getElementById('ai-confidence');
-    const aiRisk = document.getElementById('ai-risk');
-    const aiRecommendation = document.getElementById('ai-recommendation');
-    
-    if (!aiMessage) return;
-    
-    try {
-        const response = await fetch(`${API_BASE}/api/ai_yorum`);
-        
-        if (!response.ok) {
-            throw new Error('AI API yanıt vermedi');
-        }
-        
-        const data = await response.json();
-        
-        if (data.durum === 'basarili') {
-            // AI yorumunu göster
-            aiMessage.innerHTML = `<p>${data.yorum}</p>`;
-            
-            // Metrikleri güncelle
-            if (aiTimestamp) aiTimestamp.textContent = new Date().toLocaleTimeString('tr-TR');
-            if (aiConfidence) aiConfidence.textContent = `${data.guvenilirlik}%`;
-            if (aiRisk) aiRisk.textContent = data.risk_seviyesi;
-            if (aiRecommendation) aiRecommendation.textContent = data.oneri;
-        } else {
-            aiMessage.innerHTML = `<p>${data.yorum || 'AI analizi yapılamadı.'}</p>`;
-        }
-    } catch (error) {
-        console.error('AI Analysis Error:', error);
-        aiMessage.innerHTML = '<p>⚠️ AI servisi geçici olarak kullanılamıyor. Sistem verileri izleniyor...</p>';
-    }
-}
-
 async function updateDashboard() {
     try {
         const response = await fetch(`${API_BASE}/api/canli_veri`);
@@ -654,9 +614,9 @@ async function updateDashboard() {
 
     } catch (error) {
         console.error("Dashboard Update Error:", error);
-        const aiMessage = document.getElementById('ai-message');
-        if (aiMessage) {
-            aiMessage.innerHTML = "<p>⚠️ BAĞLANTI KAYBOLDU - NOAA veri akışına yeniden bağlanılıyor...</p>";
+        const aiText = document.getElementById('ai-text');
+        if (aiText) {
+            aiText.textContent = "⚠️ CONNECTION LOST - Attempting to reconnect to NOAA data stream...";
         }
     }
 }
@@ -1042,6 +1002,200 @@ function updateTurkishSatellites(tehditSkoru) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
+//  NASA DONKI EVENTS
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function fetchDONKIEvents() {
+    try {
+        // Backend proxy üzerinden DONKI verilerini çek
+        const response = await fetch(`${API_BASE}/api/donki_proxy`);
+        
+        if (!response.ok) throw new Error('DONKI Proxy Error');
+        
+        const data = await response.json();
+        
+        if (data.durum === 'basarili') {
+            displayDONKIEvents(data.events);
+        } else {
+            displayDONKIEvents([]);
+        }
+    } catch (error) {
+        console.error('DONKI Fetch Error:', error);
+        displayDONKIEvents([]);
+    }
+}
+
+function displayDONKIEvents(events) {
+    const eventsList = document.getElementById('donki-events-list');
+    if (!eventsList) return;
+    
+    eventsList.innerHTML = '';
+    
+    if (events.length === 0) {
+        eventsList.innerHTML = `
+            <div class="event-item">
+                <div class="event-icon">✅</div>
+                <div class="event-content">
+                    <div class="event-title">No Active Space Weather Events</div>
+                    <div class="event-desc">All systems nominal. No significant solar activity detected in the past 7 days.</div>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    events.slice(0, 10).forEach(event => {
+        const eventItem = document.createElement('div');
+        eventItem.className = 'event-item';
+        
+        let icon = '🌟';
+        let severity = 'low';
+        
+        if (event.messageType.includes('CME')) {
+            icon = '💥';
+            severity = 'high';
+        } else if (event.messageType.includes('FLR')) {
+            icon = '⚡';
+            severity = 'medium';
+        } else if (event.messageType.includes('GST')) {
+            icon = '🌍';
+            severity = 'high';
+        }
+        
+        eventItem.innerHTML = `
+            <div class="event-icon">${icon}</div>
+            <div class="event-content">
+                <div class="event-title">${event.messageType}</div>
+                <div class="event-desc">${event.messageBody.substring(0, 200)}...</div>
+                <div class="event-time">${new Date(event.messageIssueTime).toLocaleString()}</div>
+                <span class="event-severity ${severity}">${severity.toUpperCase()}</span>
+            </div>
+        `;
+        
+        eventsList.appendChild(eventItem);
+    });
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+//  AI ANALYSIS SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+
+async function updateAIAnalysis() {
+    const aiMessage = document.getElementById('ai-message');
+    const aiTimestamp = document.getElementById('ai-timestamp');
+    const aiConfidence = document.getElementById('ai-confidence');
+    const aiRisk = document.getElementById('ai-risk');
+    const aiRecommendation = document.getElementById('ai-recommendation');
+    const aiTrends = document.getElementById('ai-trends');
+    const aiPrediction = document.getElementById('ai-prediction');
+    
+    if (!aiMessage) return;
+    
+    try {
+        // Backend API'den veri çek
+        const response = await fetch(`${API_BASE}/api/canli_veri`);
+        if (!response.ok) throw new Error('API Connection Failed');
+        
+        const data = await response.json();
+        const telemetri = data.telemetri || {};
+        const analiz = data.analiz || {};
+        
+        // AI analizi için veri hazırla
+        const aiVeriler = {
+            ruzgar_hizi: telemetri.ruzgar_hizi ?? 400,
+            plazma_yogunlugu: telemetri.plazma_yogunlugu ?? 5,
+            bt_gucu: telemetri.bt_gucu ?? 5,
+            bz_yonu: telemetri.bz_yonu ?? 0,
+            kp_indeksi: telemetri.kp_indeksi ?? 2,
+            proton_akisi: telemetri.proton_akisi ?? 1,
+            xray_sinifi: telemetri.xray_sinifi ?? "A1.0",
+            tehdit_skoru: analiz.tehdit_skoru ?? 1.0
+        };
+        
+        // Yerel AI analizi yap
+        if (typeof uzayHavaDurumuAnalizi !== 'undefined') {
+            const aiSonuc = uzayHavaDurumuAnalizi(aiVeriler, true);
+            
+            // AI yorumunu göster
+            aiMessage.innerHTML = `<p>${aiSonuc.yorum}</p>`;
+            
+            // Metrikleri güncelle
+            if (aiTimestamp) aiTimestamp.textContent = new Date().toLocaleTimeString('tr-TR');
+            if (aiConfidence) aiConfidence.textContent = `${aiSonuc.guvenilirlik}%`;
+            if (aiRisk) {
+                aiRisk.textContent = aiSonuc.risk_seviyesi;
+                aiRisk.className = 'ai-metric-value risk-' + aiSonuc.risk_seviyesi.toLowerCase();
+            }
+            if (aiRecommendation) {
+                const oneriKisa = aiSonuc.oneri.split(' - ')[0];
+                aiRecommendation.textContent = oneriKisa;
+            }
+            
+            // Trend analizi göster
+            if (aiTrends && aiSonuc.ai_analiz) {
+                const trendHTML = `
+                    <div class="ai-trend-item">
+                        <span class="trend-param">Güneş Rüzgarı</span>
+                        <span class="trend-badge trend-${aiSonuc.ai_analiz.ruzgar_trend.replace(' ', '-').toLowerCase()}">${aiSonuc.ai_analiz.ruzgar_trend}</span>
+                    </div>
+                    <div class="ai-trend-item">
+                        <span class="trend-param">Kp İndeksi</span>
+                        <span class="trend-badge trend-${aiSonuc.ai_analiz.kp_trend.replace(' ', '-').toLowerCase()}">${aiSonuc.ai_analiz.kp_trend}</span>
+                    </div>
+                `;
+                aiTrends.innerHTML = trendHTML;
+            }
+            
+            // Tahmin göster
+            if (aiPrediction && aiSonuc.ai_analiz && aiSonuc.ai_analiz.tahminler.ruzgar) {
+                const tahmin = aiSonuc.ai_analiz.tahminler.ruzgar;
+                const predictionHTML = `
+                    <div class="prediction-item">
+                        <div class="prediction-label">Güneş Rüzgarı Tahmini</div>
+                        <div class="prediction-value">
+                            <span class="pred-current">${tahmin.mevcut.toFixed(0)} km/s</span>
+                            <span class="pred-arrow">${tahmin.degisim > 0 ? '↗' : '↘'}</span>
+                            <span class="pred-future">${tahmin.tahmin.toFixed(0)} km/s</span>
+                        </div>
+                        <div class="prediction-desc">
+                            Değişim: ${tahmin.degisim > 0 ? '+' : ''}${tahmin.degisim.toFixed(0)} km/s |
+                            Güven: ${tahmin.guven.toFixed(0)}%
+                        </div>
+                    </div>
+                `;
+                aiPrediction.innerHTML = predictionHTML;
+            } else if (aiPrediction) {
+                aiPrediction.innerHTML = `
+                    <div class="prediction-item">
+                        <div class="prediction-label">Tahmin için veri bekleniyor...</div>
+                        <div class="prediction-desc">En az 10 analiz gerekli (${typeof uzayAI !== 'undefined' ? uzayAI.tarihce.length : 0}/10)</div>
+                    </div>
+                `;
+            }
+            
+        } else {
+            // Fallback: Backend API kullan
+            const aiResponse = await fetch(`${API_BASE}/api/ai_yorum`);
+            if (aiResponse.ok) {
+                const aiData = await aiResponse.json();
+                if (aiData.durum === 'basarili') {
+                    aiMessage.innerHTML = `<p>${aiData.yorum}</p>`;
+                    if (aiTimestamp) aiTimestamp.textContent = new Date().toLocaleTimeString('tr-TR');
+                    if (aiConfidence) aiConfidence.textContent = `${aiData.guvenilirlik}%`;
+                    if (aiRisk) aiRisk.textContent = aiData.risk_seviyesi;
+                    if (aiRecommendation) aiRecommendation.textContent = aiData.oneri;
+                }
+            }
+        }
+        
+    } catch (error) {
+        console.error('AI Analysis Error:', error);
+        aiMessage.innerHTML = '<p>⚠️ AI sistemi başlatılıyor... Veri akışı bekleniyor.</p>';
+    }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
 //  SCROLL REVEAL ANIMATION
 // ═══════════════════════════════════════════════════════════════════════════
 
@@ -1074,11 +1228,36 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchSatelliteData();
         setInterval(fetchSatelliteData, 15000);
         
-        // AI analizi ayrı interval'de (30 saniye)
-        updateAIAnalysis();
-        setInterval(updateAIAnalysis, 30000);
-        
         console.log('✅ SOLARIS Mission Control Online');
+    });
+    
+    // Initialize DONKI events
+    fetchDONKIEvents();
+    setInterval(fetchDONKIEvents, 30 * 60 * 1000);
+    
+    // Initialize AI Analysis
+    updateAIAnalysis();
+    setInterval(updateAIAnalysis, 10000); // Update every 10 seconds
+    
+    // Event filter buttons
+    const filterBtns = document.querySelectorAll('.event-filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const filterType = btn.dataset.type;
+            const events = document.querySelectorAll('.event-item');
+            
+            events.forEach(event => {
+                const title = event.querySelector('.event-title')?.textContent || '';
+                if (filterType === 'all' || title.includes(filterType)) {
+                    event.style.display = 'flex';
+                } else {
+                    event.style.display = 'none';
+                }
+            });
+        });
     });
 });
 

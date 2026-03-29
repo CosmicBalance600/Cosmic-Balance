@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SOLARIS MISSION CONTROL - Advanced Space Weather Operations Center</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="ai_styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
@@ -25,8 +26,8 @@
     <div id="emergency-banner" class="emergency-banner hidden">
         <div class="emergency-content">
             <span class="emergency-icon">⚠️</span>
-            <span class="emergency-text">GEOMAGNETIC STORM WARNING</span>
-            <span class="emergency-level">G3 - STRONG</span>
+            <span class="emergency-text">JEOMANYETİK FIRTINA UYARISI</span>
+            <span class="emergency-level">G3 - GÜÇLÜ</span>
             <button class="emergency-dismiss" onclick="dismissAlert()">✕</button>
         </div>
     </div>
@@ -38,7 +39,7 @@
         <nav class="top-nav reveal">
             <div class="nav-left">
                 <span class="nav-logo">⚡ SOLARIS</span>
-                <span class="nav-mission">SWOC v3.0</span>
+                <span class="nav-mission">UZAY HAVA MERKEZİ v3.0</span>
                 <div class="nav-breadcrumb">
                     <span>OPERASYONLAR</span>
                     <span class="breadcrumb-sep">›</span>
@@ -52,14 +53,14 @@
                     <span id="utc-date" class="time-date">----/--/--</span>
                 </div>
                 <div class="time-display">
-                    <span class="time-label">YEREL</span>
+                    <span class="time-label">LOCAL</span>
                     <span id="local-time" class="time-value">--:--:--</span>
                     <span id="local-date" class="time-date">----/--/--</span>
                 </div>
                 <div class="time-display">
                     <span class="time-label">GÖREV</span>
                     <span id="mission-time" class="time-value">--:--:--</span>
-                    <span class="time-date">GEÇEN</span>
+                    <span class="time-date">GEÇEN SÜRE</span>
                 </div>
             </div>
             <div class="nav-right">
@@ -94,7 +95,7 @@
             <!-- Critical Status Overview -->
             <div class="critical-overview reveal">
                 <div class="overview-header">
-                    <h2>🎯 KRİTİK GÖREV DURUMU</h2>
+                    <h2>🎯 GÖREV KRİTİK DURUM</h2>
                     <div class="overview-timestamp">
                         <span>SON GÜNCELLEME:</span>
                         <span id="last-update-time">--:--:--</span>
@@ -109,7 +110,7 @@
                         </div>
                         <div class="overview-trend" id="threat-trend">
                             <span class="trend-arrow">→</span>
-                            <span class="trend-text">KARARLΙ</span>
+                            <span class="trend-text">KARLI</span>
                         </div>
                     </div>
                     <div class="overview-card wind">
@@ -131,7 +132,7 @@
                         </div>
                         <div class="overview-trend" id="bt-trend">
                             <span class="trend-arrow">→</span>
-                            <span class="trend-text">KARARLΙ</span>
+                            <span class="trend-text">KARLI</span>
                         </div>
                     </div>
                     <div class="overview-card radiation">
@@ -148,7 +149,7 @@
                     <div class="overview-card kp">
                         <div class="overview-icon">🌍</div>
                         <div class="overview-data">
-                            <span class="overview-label">Kp İNDEKSİ</span>
+                            <span class="overview-label">Kp INDEX</span>
                             <span class="overview-value" id="overview-kp">---</span>
                         </div>
                         <div class="overview-trend" id="kp-trend">
@@ -164,47 +165,6 @@
                         </div>
                         <div class="overview-trend">
                             <span class="trend-text">İZLENİYOR</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI Analysis Section -->
-            <div class="ai-analysis-section reveal">
-                <div class="section-header">
-                    <h2>🤖 YAPAY ZEKA ANALİZİ</h2>
-                    <div class="ai-status">
-                        <span class="ai-indicator"></span>
-                        <span>AI AKTİF</span>
-                    </div>
-                </div>
-                <div class="ai-analysis-card">
-                    <div class="ai-header">
-                        <span class="ai-icon">🧠</span>
-                        <div class="ai-title">
-                            <span class="ai-label">GERÇEK ZAMANLI YORUM</span>
-                            <span class="ai-timestamp" id="ai-timestamp">--:--:--</span>
-                        </div>
-                    </div>
-                    <div class="ai-content">
-                        <div class="ai-message" id="ai-message">
-                            <p><strong>SAKIN UZAY HAVASI KOŞULLARI</strong></p>
-                            <p>Tüm parametreler normal aralıkta. Güneş rüzgarı nominal hızda, manyetik alan kararlı.</p>
-                            <p>Jeomanyetik aktivite düşük. Uydu operasyonları için ideal koşullar.</p>
-                        </div>
-                    </div>
-                    <div class="ai-metrics">
-                        <div class="ai-metric">
-                            <span class="ai-metric-label">Güvenilirlik</span>
-                            <span class="ai-metric-value" id="ai-confidence">85%</span>
-                        </div>
-                        <div class="ai-metric">
-                            <span class="ai-metric-label">Risk Seviyesi</span>
-                            <span class="ai-metric-value" id="ai-risk">DÜŞÜK</span>
-                        </div>
-                        <div class="ai-metric">
-                            <span class="ai-metric-label">Öneri</span>
-                            <span class="ai-metric-value" id="ai-recommendation">İZLEME DEVAM</span>
                         </div>
                     </div>
                 </div>
@@ -260,7 +220,7 @@
                                 <span class="stat-mini-value" id="speed-max">---</span>
                             </div>
                         </div>
-                        <div class="telemetry-status" id="status-speed">NOMINAL</div>
+                        <div class="telemetry-status" id="status-speed">NORMAL</div>
                     </div>
 
                     <div class="telemetry-card">
@@ -302,7 +262,7 @@
                                 <span class="stat-mini-value" id="density-max">---</span>
                             </div>
                         </div>
-                        <div class="telemetry-status" id="status-density">NOMINAL</div>
+                        <div class="telemetry-status" id="status-density">NORMAL</div>
                     </div>
 
                     <div class="telemetry-card">
@@ -344,7 +304,7 @@
                                 <span class="stat-mini-value" id="bt-max">---</span>
                             </div>
                         </div>
-                        <div class="telemetry-status" id="status-bt">NOMINAL</div>
+                        <div class="telemetry-status" id="status-bt">NORMAL</div>
                     </div>
 
                     <div class="telemetry-card">
@@ -387,11 +347,75 @@
                                 <span class="stat-mini-value" id="bz-max">---</span>
                             </div>
                         </div>
-                        <div class="telemetry-status" id="status-bz">NOMINAL</div>
+                        <div class="telemetry-status" id="status-bz">NORMAL</div>
                     </div>
                 </div>
             </div>
 
+            <!-- AI Analysis Section -->
+            <div class="ai-analysis-section reveal">
+                <div class="section-header">
+                    <h2>🤖 YAPAY ZEKA ANALİZ SİSTEMİ</h2>
+                    <div class="ai-badge-header">
+                        <span class="ai-status-dot"></span>
+                        <span>AI AKTIF</span>
+                    </div>
+                </div>
+                <div class="ai-analysis-container">
+                    <div class="ai-main-panel">
+                        <div class="ai-panel-header">
+                            <span class="ai-icon">🧠</span>
+                            <span class="ai-title">AKILLI DURUM DEĞERLENDİRMESİ</span>
+                            <span class="ai-timestamp" id="ai-timestamp">--:--:--</span>
+                        </div>
+                        <div class="ai-message" id="ai-message">
+                            <p>AI analiz sistemi başlatılıyor... Veri akışı bekleniyor.</p>
+                        </div>
+                        <div class="ai-metrics-row">
+                            <div class="ai-metric-box">
+                                <div class="ai-metric-label">GÜVENİLİRLİK</div>
+                                <div class="ai-metric-value" id="ai-confidence">--%</div>
+                            </div>
+                            <div class="ai-metric-box">
+                                <div class="ai-metric-label">RİSK SEVİYESİ</div>
+                                <div class="ai-metric-value" id="ai-risk">---</div>
+                            </div>
+                            <div class="ai-metric-box">
+                                <div class="ai-metric-label">ÖNERİ</div>
+                                <div class="ai-metric-value" id="ai-recommendation">---</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-side-panels">
+                        <div class="ai-trend-panel">
+                            <div class="ai-trend-header">
+                                <span>📈 TREND ANALİZİ</span>
+                            </div>
+                            <div class="ai-trend-items" id="ai-trends">
+                                <div class="ai-trend-item">
+                                    <span class="trend-param">Güneş Rüzgarı</span>
+                                    <span class="trend-badge trend-loading">YÜKLENIYOR</span>
+                                </div>
+                                <div class="ai-trend-item">
+                                    <span class="trend-param">Kp İndeksi</span>
+                                    <span class="trend-badge trend-loading">YÜKLENIYOR</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ai-prediction-panel">
+                            <div class="ai-prediction-header">
+                                <span>🔮 30 DAKİKA TAHMİNİ</span>
+                            </div>
+                            <div class="ai-prediction-content" id="ai-prediction">
+                                <div class="prediction-item">
+                                    <div class="prediction-label">Tahmin için veri bekleniyor...</div>
+                                    <div class="prediction-desc">En az 10 analiz gerekli</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Advanced Analytics Grid -->
             <div class="analytics-section reveal">
@@ -426,7 +450,7 @@
                             </div>
                             <div class="stat-box">
                                 <span class="stat-label">TREND</span>
-                                <span class="stat-value" id="wind-chart-trend">STABLE</span>
+                                <span class="stat-value" id="wind-chart-trend">KARLI</span>
                             </div>
                         </div>
                     </div>
@@ -450,7 +474,7 @@
                             </div>
                             <div class="stat-box">
                                 <span class="stat-label">STATUS</span>
-                                <span class="stat-value" id="threat-chart-status">NOMINAL</span>
+                                <span class="stat-value" id="threat-chart-status">NORMAL</span>
                             </div>
                         </div>
                     </div>
@@ -502,30 +526,30 @@
             <!-- 3D Earth Globe with Satellite Data -->
             <div class="globe-section reveal">
                 <div class="section-header">
-                    <h2>🌍 KÜRESEL UZAY HAVASI ETKİSİ</h2>
+                    <h2>🌍 KÜRESEL UZAY HAVA ETKİSİ</h2>
                     <div class="globe-controls">
                         <button class="globe-btn active" data-view="aurora">AURORA</button>
-                        <button class="globe-btn" data-view="satellites">SATELLITES</button>
-                        <button class="globe-btn" data-view="radiation">RADIATION</button>
+                        <button class="globe-btn" data-view="satellites">UYDULAR</button>
+                        <button class="globe-btn" data-view="radiation">RADYASYON</button>
                     </div>
                 </div>
                 <div class="globe-container">
                     <div id="earth-globe" class="earth-canvas"></div>
                     <div class="globe-info-panel">
                         <div class="globe-info-card">
-                            <div class="info-label">AURORA VISIBILITY</div>
-                            <div class="info-value" id="aurora-visibility">MODERATE</div>
-                            <div class="info-desc">Kp Index: <span id="aurora-kp">3.0</span></div>
+                            <div class="info-label">AURORA GÖRÜNÜRLÜĞÜ</div>
+                            <div class="info-value" id="aurora-visibility">ORTA</div>
+                            <div class="info-desc">Kp İndeksi: <span id="aurora-kp">3.0</span></div>
                         </div>
                         <div class="globe-info-card">
-                            <div class="info-label">ACTIVE SATELLITES</div>
-                            <div class="info-value" id="active-satellites">5</div>
-                            <div class="info-desc">Monitoring Status: ONLINE</div>
+                            <div class="info-label">AKTİF UYDULAR</div>
+                            <div class="info-value" id="active-satellites">18</div>
+                            <div class="info-desc">İzleme Durumu: ÇEVRİMİÇİ</div>
                         </div>
                         <div class="globe-info-card">
-                            <div class="info-label">RADIATION LEVEL</div>
-                            <div class="info-value" id="radiation-level">LOW</div>
-                            <div class="info-desc">Proton Flux: <span id="proton-flux">---</span> pfu</div>
+                            <div class="info-label">RADYASYON SEVİYESİ</div>
+                            <div class="info-value" id="radiation-level">DÜŞÜK</div>
+                            <div class="info-desc">Proton Akısı: <span id="proton-flux">---</span> pfu</div>
                         </div>
                     </div>
                 </div>
@@ -880,6 +904,31 @@
 
                     <div class="satellite-card">
                         <div class="sat-header">
+                            <div class="sat-icon">🇹🇷</div>
+                            <div class="sat-info">
+                                <div class="sat-name">TÜRKSAT 5A</div>
+                                <div class="sat-location">Geostationary (42°E)</div>
+                            </div>
+                            <div class="sat-status online">AKTİF</div>
+                        </div>
+                        <div class="sat-metrics">
+                            <div class="sat-metric">
+                                <span class="metric-label">Sinyal Gücü</span>
+                                <span class="metric-value" id="turksat-signal">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Kapsama</span>
+                                <span class="metric-value" id="turksat-coverage">---</span>
+                            </div>
+                            <div class="sat-metric">
+                                <span class="metric-label">Durum</span>
+                                <span class="metric-value" id="turksat-status">NOMINAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="satellite-card">
+                        <div class="sat-header">
                             <div class="sat-icon">🇨🇳</div>
                             <div class="sat-info">
                                 <div class="sat-name">FENGYUN-3E</div>
@@ -996,6 +1045,7 @@
     </div>
 </footer>
 
+<script src="uzay_analiz.js"></script>
 <script src="globe-earth.js"></script>
 <script src="app.js"></script>
 </body>

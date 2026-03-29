@@ -155,9 +155,34 @@
                 padding-right: 20px;
             }
         }
+
+        /* Sayfa Geçiş Animasyonu - Sağdan Sola Kayma */
+        .page-transition {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(90deg, #0a0e27 0%, #000814 100%);
+            z-index: 9999;
+            transition: right 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .page-transition.active {
+            right: 0;
+        }
+
+        @keyframes slideIn {
+            from { right: -100%; }
+            to { right: 0; }
+        }
     </style>
 </head>
 <body>
+    <!-- Sayfa Geçiş Overlay -->
+    <div class="page-transition" id="pageTransition"></div>
+
     <canvas id="canvas-stars"></canvas>
     <canvas id="shooting-stars"></canvas>
 
@@ -170,7 +195,7 @@
             <h1 class="main-title">GÜNEŞ FIRTINASI TAKİP<br>SİSTEMİ</h1>
             <p class="sub-title">Dünyayı etkileyen kozmik olayları anlık izleyin.</p>
             
-            <a href="dashboard.html" class="watch-live-btn">
+            <a href="dashboard.html" class="watch-live-btn" id="dashboardBtn">
                 <span class="live-indicator"></span>
                 ANLIK VERİYİ İZLE
             </a>
@@ -371,6 +396,22 @@
         window.addEventListener('resize', () => {
             shootingCanvas.width = window.innerWidth * 0.5;
             shootingCanvas.height = window.innerHeight;
+        });
+
+        // Sayfa Geçiş Animasyonu
+        const dashboardBtn = document.getElementById('dashboardBtn');
+        const pageTransition = document.getElementById('pageTransition');
+
+        dashboardBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            
+            // Geçiş animasyonunu başlat
+            pageTransition.classList.add('active');
+            
+            // 800ms sonra dashboard'a yönlendir
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 800);
         });
     </script>
 </body>
