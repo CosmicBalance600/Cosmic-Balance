@@ -1,135 +1,88 @@
 
-
 ***
 
 ```markdown
-# ☀️ Solaris V2 - Jeomanyetik Fırtına Otonom Erken Uyarı Sistemi
+# ☀️ SOLARIS V2
+### Jeomanyetik Fırtına Otonom Erken Uyarı Sistemi
 
-<div align="center">
-
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
-![Status](https://img.shields.io/badge/status-active-success.svg)
+![Status](https://img.shields.io/badge/durum-aktif-success.svg)
+![License](https://img.shields.io/badge/lisans-MIT-green.svg)
 
-**Uzay kaynaklı jeomanyetik fırtınaları gerçek zamanlı izleyen ve insan müdahalesiz (otonom) kriz protokolleri tetikleyen erken uyarı ağı.**
-
-</div>
-
----
-
-## 💡 Akıldaki Sorular (Hızlı Yanıtlar)
-
-* **Çalıştırmak için API Key (Şifre) Zorunlu mu?** * **HAYIR.** Sistem, güneş rüzgarı ve plazma verilerini NASA/NOAA'nın halka açık sunucularından çeker. Hiçbir şifre girmeden sistemi başlatıp grafikleri ve 3D dünyayı canlı izleyebilirsiniz.
-* **Yapay Zeka Raporu Nasıl Çalışır?** * Kriz anında yapay zekanın (Claude) durum raporu yazmasını isterseniz, klasördeki `.env` dosyasının içine kendi `API_KEY` bilginizi girebilirsiniz. Girmezseniz sistem çökmez, standart askeri durum mesajları üretir.
-* **Sistem İnternetsiz Çalışır mı?**
-  * Verileri NASA'dan çektiği için aktif bir internet bağlantısı gerektirir.
+**Solaris V2 nedir?** Güneş'ten Dünya'ya doğru gelen tehlikeli uzay fırtınalarını (Güneş patlamaları vb.) uydulardan takip eden bir sistemdir. 
+Tehlike anında bir insanın düğmeye basmasını beklemez; kendi kendine karar verir ve sistemi kırmızı alarma geçirir.
 
 ---
 
-## 🚀 Kurulum ve Çalıştırma Rehberi (Adım Adım)
+## 💡 En Çok Merak Edilenler (Hızlı Cevaplar)
 
-Jüri üyelerinin ve geliştiricilerin sistemi kendi bilgisayarlarında test edebilmesi için en basit kurulum adımları aşağıdadır. Sistem **Python 3.10 veya üzeri** gerektirir.
+* **Sistemi test etmek için şifre veya API Key girmeli miyim?** * **HAYIR.** Sistem, uzay verilerini NASA ve NOAA'nın halka açık kaynaklarından çeker.
+  * Hiçbir ayar yapmadan, direkt başlatıp 3D dünyayı ve grafikleri canlı izleyebilirsiniz.
 
-### 1. Dosyaları Bilgisayarınıza İndirin
-* Sayfanın sağ üst köşesindeki yeşil **"<> Code"** butonuna tıklayın.
-* **"Download ZIP"** seçeneğini seçin ve inen dosyayı bir klasöre çıkartın.
-* *(Geliştiriciler için alternatif: `git clone https://github.com/CosmicBalance600/Cosmic-Balance.git`)*
+* **Peki `.env` dosyası ne işe yarıyor?** * Kriz anında yapay zekanın durum raporu yazmasını isterseniz gereklidir.
+  * İsterseniz klasördeki `.env` dosyasının içine kendi `API_KEY` bilginizi girebilirsiniz. 
+  * Girmezseniz sistem çökmez, sadece standart acil durum mesajları gösterir.
 
-### 2. Gerekli Kütüphaneleri Kurun
+* **İnternetsiz çalışır mı?**
+  * Hayır. NASA'dan anlık veri çektiği için aktif internet bağlantısı şarttır.
+
+---
+
+## 🚀 Sistemi Bilgisayarda Çalıştırma Rehberi
+
+Sistemi denemek çok basittir. Lütfen adımları sırasıyla uygulayın.
+*(Not: Bilgisayarınızda Python yüklü olmalıdır.)*
+
+### ADIM 1: Dosyaları İndirin
+1. Bu sayfanın sağ üstündeki yeşil **"<> Code"** butonuna tıklayın.
+2. **"Download ZIP"** seçeneğine tıklayıp indirin.
+3. İnen dosyayı masaüstünde bir klasöre çıkartın.
+
+### ADIM 2: Gerekli Kurulumları Yapın
 1. Çıkarttığınız proje klasörünün içine girin.
-2. Üstteki **dosya yolu (adres) çubuğuna** tıklayın, içindeki her şeyi silip **`cmd`** yazın ve Enter'a basın. (Siyah bir komut ekranı açılacaktır).
-3. Açılan ekrana şu kodu yapıştırıp Enter'a basın:
+2. Klasörün en üstündeki **adres çubuğuna** tıklayın, içindekileri silip **`cmd`** yazın ve Enter'a basın.
+3. Açılan siyah ekrana şu kodu yapıştırıp Enter'a basın:
    ```bash
    pip install -r requirements.txt
    ```
+*(Yüklemenin bitmesini bekleyin).*
 
-### 3. Sistemi Başlatın (Motorları Ateşleme)
-Sistemimiz, çökme riskine karşı iki ayrı asenkron motorla çalışır. Proje klasörünüzde iki farklı komut ekranı (cmd) açmanız gerekir.
+### ADIM 3: Motorları Çalıştırın
+Sistemimiz çökme riskine karşı iki farklı motorla çalışır. İkisini de başlatmalıyız.
 
-**Terminal 1 (Veri Toplama Motoru):**
-NASA'dan verileri çekmeye başlar. Bu ekranı açıp simge durumuna küçültün.
+**1. Veri Motoru:** Açık olan siyah ekrana şu kodu yazıp Enter'a basın:
 ```bash
 python solaris_baslat.py
 ```
+*(Bu motor NASA'dan veri çekmeye başlar. Bu ekranı kapatmayın, aşağı indirin).*
 
-**Terminal 2 (Web Sunucusu):**
-Yeni bir `cmd` ekranı daha açın ve arayüz köprüsünü başlatın. Bunu da küçültün.
+**2. Web Sunucusu:** Klasörün adres çubuğuna tekrar **`cmd`** yazıp İKİNCİ bir siyah ekran açın. Şunu yazın:
 ```bash
 python web_sunucu.py
 ```
+*(Bu köprü görevini görür. Bunu da kapatmayın, aşağı indirin).*
 
-**Arayüze Giriş:**
-Motorlar çalıştıktan sonra proje klasöründeki **`Arayuz_UI`** klasörüne girin ve **`index.html`** dosyasına çift tıklayarak tarayıcınızda açın. *(Verilerin NASA'dan inip ekrana yansıması 5-10 saniye sürebilir).*
+### ADIM 4: Web Sitesini Açın
+Motorlar arka planda çalışırken proje klasöründeki **`Arayuz_UI`** klasörüne girin. 
+Oradaki **`index.html`** dosyasına çift tıklayarak tarayıcınızda açın.
+*(Verilerin NASA'dan inip ekrana yansıması 5-10 saniye sürebilir).*
 
 ---
 
-## 🚨 Kriz Simülasyonu (Büyük Test)
-Sistemin kriz anında (bir Güneş Patlaması Dünya'yı vurduğunda) otonom olarak nasıl karar aldığını görmek için şu testi uygulayın:
+## 🚨 Büyük Test (Kırmızı Alarm Simülasyonu)
 
-1. Tarayıcıda arayüz açık ve sakin durumdayken, proje klasöründe **üçüncü bir komut ekranı (cmd)** açın.
-2. Şu komutu çalıştırın:
+Her şey yeşil ve sakinken, sistemin kriz anında nasıl karar aldığını görmek ister misiniz?
+
+1. Tarayıcıda arayüz açıkken, proje klasöründe **üçüncü bir komut ekranı (cmd)** açın.
+2. Şu kodu yapıştırıp Enter'a basın:
    ```bash
    python kriz_tetikle.py
    ```
-3. **Hemen tarayıcıya geri dönün ve izleyin:** Rüzgar hızının aniden 800+ km/s seviyesine fırladığını, Tehdit Skorunun 9.8'e vurduğunu ve sistemin otonom olarak **Kırmızı Alarm** (Massive Explosion) protokolüne geçtiğini göreceksiniz.
+3. **Hemen tarayıcıya (web sitesine) geri dönün ve izleyin:**
+   * Rüzgar hızı aniden 800+ km/s seviyesine fırlar.
+   * Tehdit Skoru 9.8'e vurur.
+   * Sistem insan müdahalesi olmadan **Kırmızı Alarm** (Massive Explosion) protokolüne geçer.
 
 ---
-
-## 📊 Sistem Mimarisi
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                    SOLARIS V2 - OTONOM AĞ                   │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-        ┌─────────────────────────────────────────┐
-        │   FAZ 1: VERİ MERKEZİ (veri_merkezi.py) │
-        └─────────────────────────────────────────┘
-        │ • NASA/NOAA'dan 5 Paralel Sensör Verisi │
-        │ • 15 Saniyelik Asenkron Toplama Döngüsü │
-                              │
-                              ▼
-        ┌─────────────────────────────────────────┐
-        │   FAZ 2: ZEKA MERKEZİ (zeka_merkezi.py) │
-        └─────────────────────────────────────────┘
-        │ • Thread-Safe SQLite WAL Hafıza Kaydı   │
-        │ • Çok Faktörlü Tehdit Puanlama (1-10)   │
-        │ • Yapay Zeka (LLM) Rapor Üretimi        │
-                              │
-                              ▼
-        ┌─────────────────────────────────────────────┐
-        │  FAZ 3: AKSİYON MERKEZİ (aksiyon_merkezi.py)│
-        └─────────────────────────────────────────────┘
-        │ • Tehdit Skoru ≥ 7.0 → Kriz Tetikleme       │
-        │ • Havacılık/Enerji Otonom Webhook Uyarıları │
-                              │
-                              ▼
-        ┌─────────────────────────────────────────┐
-        │   WEB DASHBOARD (3D UI & Chart.js)      │
-        └─────────────────────────────────────────┘
-```
-
-## ✨ Temel Özellikler
-
-* **Graceful Degradation:** NASA uydularından biri kopsa bile sistem çökmez, kalan uydularla çalışmaya devam eder.
-* **Akıllı Fallback:** SDO güneş lekesi (Sunspot) sayılarını, sabit vermek yerine Kp indeksine göre dinamik hesaplar.
-* **Otonom Bypass:** Kriz anında operatör onayı beklemeden kritik altyapılara kapatma/tahliye komutu iletir.
-
----
-
-## 🔑 İsteğe Bağlı Ortam Değişkenleri (.env)
-Yapay Zeka (AI) raporlaması ve otonom Discord bildirimleri için proje ana dizinindeki `.env` dosyasını kendi bilgilerinizle düzenleyebilirsiniz:
-
-```env
-API_KEY=sizin_yapay_zeka_api_anahtariniz
-DISCORD_WEBHOOK_URL=sizin_discord_kanal_linkiniz
-```
-
-## 📝 Lisans
-Bu proje [MIT Lisansı](LICENSE) altında açık kaynak olarak lisanslanmıştır.
-
-<div align="center">
-<b>Cosmic Balance Ekibi Tarafından TUA Astro Hackathon İçin Geliştirilmiştir 🚀</b>
-</div>
+*Cosmic Balance Ekibi Tarafından TUA Astro Hackathon İçin Geliştirilmiştir.* 🚀
 ```
