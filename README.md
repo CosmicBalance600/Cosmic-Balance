@@ -75,4 +75,4 @@ python kriz_tetikle.py
 - Sistem insan müdahalesi olmadan otonom bir şekilde Kırmızı Alarm (Massive Explosion) protokolüne geçer.
 
 ---
-Cosmic Balance Ekibi Tarafından TUA Astro Hackathon İçin Geliştirilmiştir.
+Kozmik Denge Ekibi Tarafından TUA Astro Hackathon İçin Geliştirilmiştir.
